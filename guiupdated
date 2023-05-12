@@ -1,0 +1,137 @@
+import streamlit as st
+import matplotlib.pyplot as plt
+import app4 as ap
+from PIL import Image
+import cv2
+import logging
+# page layout
+logger = logging.getLogger('my_logger')
+logger.setLevel(logging.DEBUG)
+
+logger = logging.getLogger('my_logger')
+logger.setLevel(logging.DEBUG)
+
+# create file handler and set level to debug
+file_handler = logging.FileHandler('my_logs.txt')
+file_handler.setLevel(logging.DEBUG)
+
+# create formatter
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+
+# add formatter to file handler
+file_handler.setFormatter(formatter)
+
+# add file handler to logger
+logger.addHandler(file_handler)
+fig1, (ax1, ax2) = plt.subplots(1, 2, figsize=(5, 3))
+
+# importing style css.file
+with open("file.css") as fl:
+    st.markdown(f"<style>{fl.read()}</style>", unsafe_allow_html=True)
+
+# customizing the layout
+left_column, right_column = st.columns(2)
+with left_column:
+    first_img_container_left = st.container()
+    second_img_container_left = st.container()
+
+with right_column:
+    mixer_component = st.container()
+    result_img_container_right = st.container()
+
+with first_img_container_left:
+    left_column, right_column = st.columns(2)
+
+with left_column:
+    uploaded_file = st.file_uploader("Choose an image file")
+    logger.info('Processing image...')
+
+    with right_column:
+        option = st.selectbox("choose the desired image transformation",
+                              ('FT Magnitude', 'FT Phase', 'FT Real', 'FT Imaginary'))
+    # x,y = ap.modes_for_the_image(uploaded_file)
+    # st.write (x,y)
+    if uploaded_file is not None:
+        file_size1 = uploaded_file.size
+
+        image = cv2.imread(uploaded_file.name, cv2.IMREAD_GRAYSCALE)
+        # updatedimage = image.resize((200,200))
+        # st.image(updatedimage, caption='Uploaded Image')
+        x, y, z, = ap.modes_for_the_image(image)
+        # st.write(x,y)
+
+        # Display the result
+        # ax1 = plt.subplot(1,2,1)
+        ax1.imshow(image, cmap='gray')
+        ax1.set_title('Input Image')
+        ax1.axis('off')
+
+        if option == "FT Magnitude":
+            ax2.imshow(x, cmap='gray')
+            ax2.set_title('Magnitude Spectrum')
+        elif option == "FT Phase":
+            ax2.imshow(y, cmap='gray')
+            ax2.set_title('Phase Spectrum')
+        elif option == "FT Real":
+            ax2.imshow(z, cmap='gray')
+            ax2.set_title('Real Spectrum')
+        ax2.axis('off')
+
+        st.pyplot(fig1)
+
+
+with second_img_container_left:
+    left_column, right_column = st.columns(2)
+    with left_column:
+        uploaded_file = st.file_uploader("Choose an Img file")
+        logger.info('Processing image...')
+
+    with right_column:
+        option = st.selectbox("choose the desired image transformtion",
+                              ('FT Magnitude', 'FT Phase', 'FT Real', 'FT Imaginary'))
+    # x,y = ap.modes_for_the_image(uploaded_file)
+    # st.write (x,y)
+    if uploaded_file is not None:
+        file_size2 = uploaded_file.size
+
+        image = cv2.imread(uploaded_file.name, cv2.IMREAD_GRAYSCALE)
+        # updatedimage = image.resize((200,200))
+        # st.image(updatedimage, caption='Uploaded Image')
+        x, y, z = ap.modes_for_the_image(image)
+        # st.write(x,y)
+
+        # Display the result
+        # ax1 = plt.subplot(1,2,1)
+        ax1.imshow(image, cmap='gray')
+        ax1.set_title('Input Image')
+        ax1.axis('off')
+
+        if option == "FT Magnitude":
+            ax2.imshow(x, cmap='gray')
+            ax2.set_title('Magnitude Spectrum')
+        elif option == "FT Phase":
+            ax2.imshow(y, cmap='gray')
+            ax2.set_title('Phase Spectrum')
+        elif option == "FT Real":
+            ax2.imshow(z, cmap='gray')
+            ax2.set_title('Real Spectrum')
+        ax2.axis('off')
+
+        st.pyplot(fig1)
+        if file_size1 != file_size2:
+            logger.error('Error the two image not same size')
+
+with mixer_component:
+    output_option = st.selectbox("mixer output to", ('output1', 'output2'))
+    left_column, right_column = st.columns(2)
+    with left_column:
+        st.selectbox("component1", ('img1', 'img2'))
+    with right_column:
+        st.slider("output1", 0, 100, 0)
+    st.selectbox("options", ('mag1', 'phase1', 'Real1', 'imag1'))
+    left_column1, right_column1 = st.columns(2)
+    with left_column1:
+        st.selectbox("component2", ('img1', 'img2'))
+    with right_column1:
+        st.slider("output2", 0, 100, 0)
+    st.selectbox("options2", ('mag2', 'phase2', 'Real2', 'imag2'))
