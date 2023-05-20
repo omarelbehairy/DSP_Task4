@@ -1,0 +1,43 @@
+body {
+    background-color: antiquewhite;
+}
+
+header.css-1avcm0n.e8zbici2  {
+    background-color: antiquewhite;
+    display: none;
+}
+
+block-container css-k1ih3n.egzxvld4 {
+    background-color: white;
+
+}
+
+div.css-1kyxreq.etr89bj2{
+width: 100 px;
+}
+
+div.css-1v0mbdj.etr89bj1:first-child{
+    width:-10px;
+}
+
+div.css-1eup5c7.e1tzin5v0   {
+    gap: 5rem;
+    border-color: whitesmoke;
+    border-width: 1px;
+    border-style: solid;
+}
+div.css-keje6w.e1tzin5v2    {
+    border-color: whitesmoke;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 10px;
+    font-size: smaller;
+    size: 40%;
+}
+div.block-container.css-k1ih3n.egzxvld4{
+    background-color: rgb(9, 6, 31);
+}
+
+div.css-1v0mbdj.etr89bj1{
+    align-content: center;
+}

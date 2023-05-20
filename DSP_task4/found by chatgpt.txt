@@ -1,0 +1,58 @@
+import tkinter as tk
+import cv2
+import numpy as np
+from PIL import ImageTk, Image
+from matplotlib import pyplot as plt
+from tkinter import filedialog
+
+
+class ImageGUI:
+    def __init__(self, master):
+        self.master = master
+        master.title("Image Viewer")
+        self.img = None
+        self.mag = None
+        self.phase = None
+        
+        self.canvas_mag = tk.Canvas(master, width=512, height=512)
+        self.canvas_mag.pack(side=tk.LEFT)
+        
+        self.canvas_phase = tk.Canvas(master, width=512, height=512)
+        self.canvas_phase.pack(side=tk.RIGHT)
+        
+        self.button_load = tk.Button(master, text="Load Image", command=self.load_image)
+        self.button_load.pack()
+    
+    def load_image(self):
+        file_path = filedialog.askopenfilename()
+        if file_path:
+            self.img = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
+            self.mag, self.phase = self.fft_image(self.img)
+            self.update_image()
+    
+    def fft_image(self, img):
+        f = np.fft.fft2(img)
+        fshift = np.fft.fftshift(f)
+        mag_spectrum = 20*np.log(np.abs(fshift))
+        phase_spectrum = np.angle(fshift)
+        return mag_spectrum, phase_spectrum
+    
+    def update_image(self):
+        if self.mag is not None:
+            plt_mag = plt.imshow(self.mag, cmap='gray')
+            plt_phase = plt.imshow(self.phase, cmap='gray')
+            plt_mag_data = plt_mag.get_array()
+            plt_phase_data = plt_phase.get_array()
+            plt.close()
+            img_mag = Image.fromarray(np.uint8(plt_mag_data*255))
+            img_phase = Image.fromarray(np.uint8(plt_phase_data*255))
+            img_mag_tk = ImageTk.PhotoImage(image=img_mag)
+            img_phase_tk = ImageTk.PhotoImage(image=img_phase)
+            self.canvas_mag.create_image(0, 0, anchor=tk.NW, image=img_mag_tk)
+            self.canvas_phase.create_image(0, 0, anchor=tk.NW, image=img_phase_tk)
+            self.canvas_mag.image = img_mag_tk
+            self.canvas_phase.image = img_phase_tk
+
+root = tk.Tk()
+gui = ImageGUI(root)
+root.mainloop()
