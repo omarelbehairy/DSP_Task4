@@ -80,16 +80,13 @@ def Mag_phase_Mix(mixing_ratio1,mixing_ratio2,magnitude1,magnitude2,phase1,phase
     
     return np.real(np.fft.ifft2(combined_total))
 
-def Uniform_Mag_Phase(mixing_ratio1,mixing_ratio2,image1_real,image2_real,image1_imaginary,image2_imaginary):
+def real_imaginary(mixing_ratio1,mixing_ratio2,image1_real,image2_real,image1_imaginary,image2_imaginary):
     mixed_real = image1_real * (mixing_ratio1 / 100) + image2_real * (1 - mixing_ratio1 / 100)
     mixed_imaginary = image2_imaginary * (mixing_ratio2 / 100) + image1_imaginary * (1 - mixing_ratio2 / 100)
 
     mixed_fft = mixed_real + 1j * mixed_imaginary
+    
     return np.fft.ifft2(mixed_fft).real.astype(np.uint8)
-
-def real_imaginary(mixing_ratio1,mixing_ratio2,comp1,comp2):
-    pass
-
 
 
 def mix_photos(image1, image2, mixing_ratio1,mixing_ratio2,comp1,comp2):
@@ -103,7 +100,7 @@ def mix_photos(image1, image2, mixing_ratio1,mixing_ratio2,comp1,comp2):
         #miximaginary=image1_imaginary*mixing_ratio1/100+image2_imaginary*mixing_ratio2/100
         #combined = mixreal + miximaginary * 1j
         #mixed_image = np.real(np.fft.ifft2(combined))
-        mixed_image = Uniform_Mag_Phase(mixing_ratio1,mixing_ratio2,image1_real,image2_real,image1_imaginary,image2_imaginary)
+        mixed_image = real_imaginary(mixing_ratio1,mixing_ratio2,image1_real,image2_real,image1_imaginary,image2_imaginary)
 
     elif((comp1 == 'Mag' or comp1 == 'phase' ) and ( comp2 == 'phase' or comp2 =='Mag')):
         mixed_image = Mag_phase_Mix(mixing_ratio1,mixing_ratio2,magnitude1,magnitude2,phase1,phase2)
